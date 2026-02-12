@@ -1,39 +1,32 @@
-# Pliny configuration — add the MCP servers you want to use for research.
-# Env vars are interpolated: ${VAR_NAME} is replaced from process.env / .env file.
+# Pliny configuration — subscription-based, no API keys needed.
+# Claude Code and Codex authenticate via your existing subscriptions.
 
-# LLM model to use for the outer research loop
-model: claude-sonnet-4-5-20250929
+# Agent model configuration
+agents:
+  claudeModel: claude-sonnet-4-5-20250929  # or claude-opus-4-6 for deeper analysis
+  codexModel: gpt-5.2
+  codexReasoningEffort: medium  # minimal | low | medium | high | xhigh
 
-servers:
-  # Synthesized web answers with citations
-  perplexity:
-    command: npx
-    args: ["-y", "@perplexity-ai/mcp-server"]
-    env:
-      PERPLEXITY_API_KEY: ${PERPLEXITY_API_KEY}
+# MCP servers are optional — each agent CLI uses its own MCP config by default.
+# Only add servers here if you want Pliny to connect directly (for the MCP
+# server interface or deepagents path).
+servers: {}
 
-  # Semantic web search, code examples, company research
-  exa:
-    command: npx
-    args: ["-y", "exa-mcp-server"]
-    env:
-      EXA_API_KEY: ${EXA_API_KEY}
-
-  # AI-generated repo documentation (free, HTTP)
-  deepwiki:
-    url: https://mcp.deepwiki.com/mcp
-
-  # Code indexing, package search, AI research
-  nia:
-    command: npx
-    args: ["-y", "nia-codebase-mcp@latest", "--api-key=${NIA_API_KEY}"]
-
-  # Up-to-date library docs and code examples (free)
-  context7:
-    command: npx
-    args: ["-y", "@upstash/context7-mcp@latest"]
-
-  # Web search and web fetch with content extraction
-  parallel:
-    command: npx
-    args: ["-y", "@anthropic-ai/mcp-parallel"]
+# --- Optional: direct MCP server connections ---
+# Uncomment and configure if needed:
+#
+# servers:
+#   deepwiki:
+#     url: https://mcp.deepwiki.com/mcp
+#
+#   perplexity:
+#     command: npx
+#     args: ["-y", "@perplexity-ai/mcp-server"]
+#     env:
+#       PERPLEXITY_API_KEY: ${PERPLEXITY_API_KEY}
+#
+#   exa:
+#     command: npx
+#     args: ["-y", "exa-mcp-server"]
+#     env:
+#       EXA_API_KEY: ${EXA_API_KEY}
