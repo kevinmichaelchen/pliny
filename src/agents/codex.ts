@@ -6,13 +6,19 @@ import { z } from "zod";
  * This allows the deep agent to delegate tasks to Codex for
  * code generation and analysis via stateful threads.
  */
-export function createCodexTool(): DynamicStructuredTool {
+export function createCodexTool(options?: {
+  model?: string;
+  reasoningEffort?: "minimal" | "low" | "medium" | "high" | "xhigh";
+}): DynamicStructuredTool {
+  const defaultModel = options?.model;
+  const defaultReasoningEffort = options?.reasoningEffort;
+
   return new DynamicStructuredTool({
     name: "codex",
     description:
-      "Delegate a task to OpenAI Codex for code generation, analysis, and execution. Best for tasks requiring code writing or modification.",
+      "Delegate a research task to OpenAI Codex. Best for web research, synthesis, and analysis tasks that benefit from strong reasoning.",
     schema: z.object({
-      prompt: z.string().describe("The task or question for Codex"),
+      prompt: z.string().describe("The research task or question for Codex"),
       workingDirectory: z
         .string()
         .optional()
@@ -29,6 +35,8 @@ export function createCodexTool(): DynamicStructuredTool {
 
         const codex = new Codex();
         const thread = codex.startThread({
+          model: defaultModel,
+          modelReasoningEffort: defaultReasoningEffort,
           sandboxMode: sandboxMode ?? "read-only",
           workingDirectory: workingDirectory ?? process.cwd(),
         });

@@ -6,13 +6,17 @@ import { z } from "zod";
  * This allows the deep agent to delegate tasks to Claude Code for
  * deep codebase analysis, file reading, and agentic tool use.
  */
-export function createClaudeCodeTool(): DynamicStructuredTool {
+export function createClaudeCodeTool(options?: {
+  model?: string;
+}): DynamicStructuredTool {
+  const defaultModel = options?.model;
+
   return new DynamicStructuredTool({
     name: "claude_code",
     description:
-      "Delegate a task to Claude Code for deep codebase analysis, file reading, and agentic tool use. Best for tasks requiring reading/analyzing code repositories.",
+      "Delegate a research task to Claude Code for deep analysis, web research via MCP tools, and synthesis. Best for complex research requiring strong reasoning.",
     schema: z.object({
-      prompt: z.string().describe("The task or question for Claude Code"),
+      prompt: z.string().describe("The research task or question for Claude Code"),
       cwd: z
         .string()
         .optional()
@@ -30,6 +34,7 @@ export function createClaudeCodeTool(): DynamicStructuredTool {
         const q = query({
           prompt,
           options: {
+            model: defaultModel,
             cwd: cwd ?? process.cwd(),
             maxTurns: maxTurns ?? 10,
             permissionMode: "bypassPermissions",

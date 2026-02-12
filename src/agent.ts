@@ -21,8 +21,13 @@ export function createResearchAgent(
   config: PlinyConfig,
   mcpTools: StructuredTool[],
 ) {
-  const claudeCodeTool = createClaudeCodeTool();
-  const codexTool = createCodexTool();
+  const claudeCodeTool = createClaudeCodeTool({
+    model: config.agents?.claudeModel,
+  });
+  const codexTool = createCodexTool({
+    model: config.agents?.codexModel,
+    reasoningEffort: config.agents?.codexReasoningEffort,
+  });
   const store = new InMemoryStore();
 
   return createDeepAgent({
@@ -44,9 +49,7 @@ export function createResearchAgent(
         systemPrompt: critiquePrompt,
       },
     ],
-    interruptOn: {
-      task: true,
-    },
+    ...(config.autonomous ? {} : { interruptOn: { task: true } }),
     checkpointer: new MemorySaver(),
     store,
     backend: (stateAndStore) =>
