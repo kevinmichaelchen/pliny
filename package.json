@@ -1,0 +1,30 @@
+{
+  "name": "pliny",
+  "version": "0.1.0",
+  "description": "Autonomous recursive research agent with BYOMCP",
+  "type": "module",
+  "main": "src/cli.ts",
+  "scripts": {
+    "start": "bun run src/cli.ts",
+    "mcp": "bun run src/mcp.ts"
+  },
+  "dependencies": {
+    "deepagents": "^1.7",
+    "@langchain/langgraph": "latest",
+    "@langchain/langgraph-checkpoint": "latest",
+    "@langchain/langgraph-checkpoint-postgres": "latest",
+    "@langchain/core": "latest",
+    "@langchain/mcp-adapters": "^1.1",
+    "@langchain/anthropic": "latest",
+    "@langchain/openai": "latest",
+    "@modelcontextprotocol/sdk": "^1.26",
+    "@anthropic-ai/claude-agent-sdk": "latest",
+    "@openai/codex-sdk": "latest",
+    "zod": "^3.25",
+    "yaml": "^2.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.8"
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.env
+pliny.config.yaml
+bun.lock
