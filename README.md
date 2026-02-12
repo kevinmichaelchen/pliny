@@ -62,18 +62,35 @@ bun run src/cli.ts --config ./my-config.yaml "your query"
 Pliny runs a 3-step pipeline:
 
 1. **Decompose** — Claude breaks your topic into 3 focused subtopics
-2. **Fan-out** — Claude and Codex research all subtopics in parallel
+2. **Fan-out** — Claude researches all subtopics; Codex researches a
+   speed-adjusted subset (see below)
 3. **Synthesize** — Claude merges all findings into a single markdown report
 
 Each agent uses whatever MCP tools it has configured in its own environment
 (`~/.mcp.json`, etc.) — Perplexity, Exa, web search, and so on.
+
+### Model Speed Awareness
+
+Pliny knows that different models have different latency characteristics.
+GPT-5.2 via Codex is roughly **10x slower** than Claude Sonnet. To keep total
+wall-clock time reasonable, Codex only researches a fraction of subtopics
+while Claude covers all of them:
+
+| Config | Claude subtopics | Codex subtopics | Why |
+|--------|:---:|:---:|-----|
+| Sonnet + `medium` | 3 | 1 | Codex is ~10x slower |
+| Sonnet + `low` | 3 | 1 | Codex is ~5x slower |
+| Opus + `medium` | 3 | 1 | Opus is ~3x, Codex ~10x |
+| Sonnet + `minimal` | 3 | 1 | Codex is ~3x slower |
+| Opus + `xhigh` | 3 | 1 | Both are slow — Codex gets 1 |
 
 ## Defaults
 
 | Setting | Default | Notes |
 |---------|---------|-------|
 | **Subtopics** | 3 | Each query is decomposed into 3 subtopics |
-| **Concurrency** | 6 | All subtopics researched in parallel (Claude + Codex per subtopic) |
+| **Claude concurrency** | 3 | Claude researches all subtopics in parallel |
+| **Codex concurrency** | 1 | Codex researches 1 subtopic (speed-adjusted) |
 | **Depth** | 1 pass | Single decompose-research-synthesize cycle (no recursive loops) |
 | **Claude maxTurns** | 8 | Per-subtopic research turn limit |
 | **Codex sandboxMode** | `read-only` | Codex runs in read-only sandbox |
@@ -133,6 +150,31 @@ The markdown report includes:
 
 Architecture, deepagents integration, LangGraph primitives, and project
 structure are documented in the [`.specs/`](.specs/) directory.
+
+## TODO
+
+- [ ] **Recursive depth** — Currently the orchestrator runs a single
+  decompose-research-synthesize pass. Support configurable recursion depth
+  where sub-agents can spawn their own sub-agents, with a critic loop that
+  identifies gaps and triggers re-exploration.
+- [ ] **Configurable branching factor** — Let sub-agents decide how many
+  sub-subtopics to decompose into based on the model they're using and the
+  complexity of the topic, rather than hard-coding 3.
+- [ ] **Model-aware sub-agent delegation** — Sub-agents should know which
+  models to call and how much to decompose. A fast model (Sonnet) can handle
+  more breadth; a slow model (GPT-5.2 xhigh) should go deep on fewer topics.
+- [ ] **Shared memory across sub-agents** — Sub-agents currently run in
+  isolation. Implement [LangGraph shared memory](https://docs.langchain.com/oss/javascript/concepts/memory.md)
+  so findings from one sub-agent inform others in real-time (e.g., avoiding
+  duplicate research, building on earlier discoveries).
+- [ ] **OpenCode agent backend** — Integrate [OpenCode](https://github.com/opencode-ai/opencode)
+  as an additional agent backend (75+ models, daemon mode).
+- [ ] **Partial resume** — Save intermediate findings so interrupted queries
+  can resume from where they left off.
+- [ ] **Cost/token tracking** — Track token usage and estimated cost across
+  all agent calls.
+- [ ] **Streaming output** — Stream findings as sub-agents complete rather
+  than waiting for all to finish.
 
 ## License
 
