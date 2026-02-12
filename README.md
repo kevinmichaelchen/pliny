@@ -72,9 +72,18 @@ Each agent uses whatever MCP tools it has configured in its own environment
 ### Model Speed Awareness
 
 Pliny knows that different models have different latency characteristics.
-GPT-5.2 via Codex is roughly **10x slower** than Claude Sonnet. To keep total
-wall-clock time reasonable, Codex only researches a fraction of subtopics
-while Claude covers all of them:
+GPT-5.2 via Codex is roughly **10x slower** than Claude Sonnet for end-to-end
+research tasks. To keep total wall-clock time reasonable, Codex only researches
+a fraction of subtopics while Claude covers all of them:
+
+> [!NOTE]
+>
+> The speed ratios are rough anecdotal observations from end-to-end CLI usage,
+> not formal benchmarks. Raw API latency is actually comparable
+> ([~600ms TTFT for GPT-5.2 vs ~800ms for Sonnet](https://claude5.com/news/gpt-5-2-speed-boost-40-percent-faster-february-2026)),
+> but the Codex CLI adds significant overhead from sandbox startup, reasoning
+> depth, and multi-turn tool loops. Your mileage will vary by query complexity
+> and reasoning effort setting.
 
 | Config | Claude subtopics | Codex subtopics | Why |
 |--------|:---:|:---:|-----|
