@@ -167,6 +167,11 @@ structure are documented in the [`.specs/`](.specs/) directory.
   isolation. Implement [LangGraph shared memory](https://docs.langchain.com/oss/javascript/concepts/memory.md)
   so findings from one sub-agent inform others in real-time (e.g., avoiding
   duplicate research, building on earlier discoveries).
+- [ ] **MCP tool hints** — Currently the research prompt just says "use any
+  available tools." Users should be able to specify which MCP servers their
+  agents have (e.g., Perplexity, Exa, DeepWiki) so the orchestrator can
+  encourage agents to use them. Could be configured via `pliny.config.yaml`,
+  CLI flags (`--prefer-tools perplexity,exa`), or both.
 - [ ] **OpenCode agent backend** — Integrate [OpenCode](https://github.com/opencode-ai/opencode)
   as an additional agent backend (75+ models, daemon mode).
 - [ ] **Partial resume** — Save intermediate findings so interrupted queries
