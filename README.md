@@ -189,6 +189,17 @@ structure are documented in the [`.specs/`](.specs/) directory.
   all agent calls.
 - [ ] **Streaming output** — Stream findings as sub-agents complete rather
   than waiting for all to finish.
+- [ ] **Free model support** — Integrate free model providers so users can
+  run Pliny without paid subscriptions. Candidates:
+  [OpenRouter free models](https://openrouter.ai/openrouter/free),
+  [OpenCode Zen](https://opencode.ai/docs/zen/),
+  [Kilo Code free/budget models](https://kilo.ai/docs/code-with-ai/agents/free-and-budget-models),
+  [Amp Code free tier](https://ampcode.com/free).
+- [ ] **Better model selection** — Expand the model roster beyond Sonnet/Opus
+  and GPT-5.2. Candidates: Haiku, Sonnet (as a lightweight option), GPT-5.2
+  Low, Kimi K2.5, MiniMax, GigaPotato, GLM-5. This ties into model-aware
+  delegation — the orchestrator should pick models based on cost, speed, and
+  task complexity.
 
 ## License
 
